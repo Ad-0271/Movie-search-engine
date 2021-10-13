@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        #movies{
+            margin-top: 20px;
+        }
+        p{
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+    <input id="movie" type="text" placeholder="Enter movie name">
+    <button onclick="main()">Get Movie</button>
+    <div id="movies"></div>
+</body>
+</html>
+
+<script>
+
+    async function getmovie(){
+
+            let movie = document.getElementById('movie').value;
+        
+            let res = await fetch(`http://www.omdbapi.com/?apikey=819d7260&t=${movie}`);
+            
+            let data = await res.json();
+            // console.log(data.Response)
+            return data;
+    }
+
+    let container = document.getElementById('movies');
+
+    function showMovie(movie){
+
+        container.innerHTML = null;
+
+        let div = document.createElement('div');
+
+        if (movie.Response == 'False'){
+
+            let message = document.createElement('h1');
+            message.innerHTML = 'Sorry Movie not found!';
+            div.appendChild(message);
+
+        } else {
+            let imgdiv = document.createElement('div');
+
+            imgdiv.style.width = '300px';
+            imgdiv.style.height = '400px'
+            imgdiv.style.backgroundImage = `url(${movie.Poster})`;
+            imgdiv.style.backgroundSize = 'contain';
+            imgdiv.style.backgroundRepeat = 'no-repeat';
+            console.log(imgdiv)
+            let img = document.createElement('img');
+            img.src = movie.Poster;
+
+            let title = document.createElement('h3');
+            title.innerHTML = movie.Title;
+
+            let genre = document.createElement('p');
+            genre.innerHTML = movie.Genre;
+
+            let year = document.createElement('p');
+            year.innerHTML = movie.Year;
+
+            let rating = document.createElement('p');
+            rating.innerHTML = `ImdbRating: ${movie.imdbRating}`;
+
+            console.log(movie);
+            if (movie.imdbRating > 8.5){
+                let recommend = document.createElement('div');
+                recommend.style.width = '100px';
+                recommend.style.backgroundColor = 'yellow';
+                recommend.innerHTML = 'Recommended';
+
+                imgdiv.appendChild(recommend);
+            }
+
+            div.append(imgdiv, title, genre, year, rating);
+        }
+        container.appendChild(div);
+    }
+
+    async function main(){
+        let data = await getmovie();
+
+        showMovie(data); 
+    }
+</script>
